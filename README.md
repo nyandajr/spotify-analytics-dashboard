@@ -65,3 +65,25 @@ Then open the URL shown in the terminal.
 
 ## License
 MIT
+
+## Insights (initial)
+
+Based on your processed dataset (`data/processed/streaming_history.parquet`), here are your peak listening hours so far:
+
+- Peak hours (overall): 00:00–01:00 is highest, followed by 01:00–02:00, 22:00–23:00, 21:00–22:00, 23:00–00:00, and 20:00–21:00.
+- Weekdays: strongest at 00:00, 01:00, 21:00, 22:00.
+- Weekends: strongest at 23:00, 22:00, 20:00, 01:00.
+
+Interpretation: late‑night listening dominates, especially around midnight; weekends shift slightly earlier (22:00–23:00).
+
+You can reproduce or refine these numbers by running the app (heatmap section) or doing a quick analysis in a Python shell:
+
+```python
+import pandas as pd
+df = pd.read_parquet('data/processed/streaming_history.parquet')
+df['hoursPlayed'] = df['msPlayed']/3_600_000.0 if 'hoursPlayed' not in df else df['hoursPlayed']
+et = pd.to_datetime(df.get('endTime', df.get('date')))
+df = df[~et.isna()].copy(); df['hour'] = et.dt.hour
+print(df.groupby('hour')['hoursPlayed'].sum().sort_values(ascending=False).head(6))
+```
+
