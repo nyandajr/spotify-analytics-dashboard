@@ -4,3 +4,5 @@ plotly
 pyarrow
 numpy
 altair
+matplotlib
+seaborn

@@ -87,3 +87,20 @@ df = df[~et.isna()].copy(); df['hour'] = et.dt.hour
 print(df.groupby('hour')['hoursPlayed'].sum().sort_values(ascending=False).head(6))
 ```
 
+## Screenshot
+
+![Overview](assets/overview.png)
+
+This image shows total listening hours by hour of day (computed from your processed data). The app itself provides interactive KPIs, heatmap, and drilldowns.
+
+## Deploy to Streamlit Community Cloud
+
+1. Push this repo to GitHub (already done).
+2. Go to https://share.streamlit.io and sign in with GitHub.
+3. Create a new app and select this repo/branch (`main`) and `app.py` as the entry point.
+4. Add a secret or environment variable if your Spotify export lives outside the repo:
+    - `SPOTIFY_DATA_DIR`: absolute path on the cloud or use the preprocessed parquet.
+5. If you commit `data/processed/streaming_history.parquet` to the repo, the app will load instantly without raw JSON.
+
+Tip: keep `requirements.txt` minimal and pinned for reproducible builds.
+
