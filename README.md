@@ -104,3 +104,36 @@ This image shows total listening hours by hour of day (computed from your proces
 
 Tip: keep `requirements.txt` minimal and pinned for reproducible builds.
 
+## Data Dictionary
+
+This dashboard primarily uses your Spotify Streaming History export. Below are key fields and derived metrics.
+
+Raw fields (from `StreamingHistory_music_*.json`):
+- `endTime` (string): timestamp when playback ended, e.g., `YYYY-MM-DD HH:MM`.
+- `artistName` (string): track’s artist.
+- `trackName` (string): track title.
+- `msPlayed` (integer): duration played in milliseconds for the record.
+
+Processed fields (saved in `data/processed/streaming_history.parquet`):
+- `endTime` (datetime): parsed timestamp.
+- `date` (date): calendar date from `endTime`.
+- `year` (Int64): calendar year.
+- `month` (Int64): month number (1–12).
+- `day` (Int64): day of month (1–31).
+- `hour` (Int64): hour of day (0–23).
+- `minutesPlayed` (float): `msPlayed / 60_000`.
+- `hoursPlayed` (float): `msPlayed / 3_600_000`.
+- `artistName` (string): cleaned artist name.
+- `trackName` (string): cleaned track title.
+
+Analytics aggregates used in the app:
+- KPIs: total plays (`len(df)`), total listening hours (`sum(hoursPlayed)`), unique artists/tracks.
+- Daily trend: sum of `hoursPlayed` per `date`.
+- Top artists: sum of `hoursPlayed` per `artistName`.
+- Hour x Day heatmap: sum of `hoursPlayed` grouped by `hour` and weekday.
+- Artist drilldown: top tracks per artist and daily hours for the selected artist.
+
+Notes:
+- Empty or unparsable timestamps are dropped during processing.
+- Parquet format requires `pyarrow` and is used for faster reads and smaller size.
+
